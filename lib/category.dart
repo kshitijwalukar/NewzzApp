@@ -18,10 +18,10 @@ class _CategoryState extends State<Category> {
   getNewsByQuery(String query) async {
     String url = "";
     if(query == "Top News" || query == "India"){
-      url = "https://newsapi.org/v2/top-headlines?country=in&apiKey=9bb7bf6152d147ad8ba14cd0e7452f2f";
+      url = "https://newsapi.org/v2/top-headlines?country=in&apiKey=91f0251d914547858c9341508e6c019f";
 
     }else{
-      url ="https://newsapi.org/v2/everything?q=$query&from=2022-02-08&sortBy=publishedAt&apiKey=9bb7bf6152d147ad8ba14cd0e7452f2f";
+      url ="https://newsapi.org/v2/everything?q=$query&from=2022-02-08&sortBy=publishedAt&apiKey=91f0251d914547858c9341508e6c019f";
     }
 
     Response response = await get(Uri.parse(url));

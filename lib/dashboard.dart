@@ -6,23 +6,26 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:http/http.dart';
 
-class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+class DashboardPage extends StatefulWidget {
+  const DashboardPage({Key? key}) : super(key: key);
 
   @override
-  _HomeState createState() => _HomeState();
+  _DashboardPageState createState() => _DashboardPageState();
 }
 
-class _HomeState extends State<Home> {
+class _DashboardPageState extends State<DashboardPage> {
   TextEditingController searchController = new TextEditingController();
   List<NewsQueryModel> newsModelList = <NewsQueryModel>[];
   List<NewsQueryModel> newsModelListCarousel = <NewsQueryModel>[];
   List<String> navBarItem = [
     "Top News",
-    "India",
-    "World",
-    "Finance",
-    "Health"
+    "General",
+    "Business",
+    "Entertainment",
+    "Health",
+    "Science",
+    "Sports",
+    "Technology",
   ];
 
   bool isLoading = true;
@@ -30,7 +33,7 @@ class _HomeState extends State<Home> {
     Map element;
     int i = 0;
     String url =
-        "https://newsapi.org/v2/everything?q=$query&from=2022-02-088&sortBy=publishedAt&apiKey=9bb7bf6152d147ad8ba14cd0e7452f2f";
+        "https://newsapi.org/v2/everything?q=$query&from=2022-02-088&sortBy=publishedAt&apiKey=91f0251d914547858c9341508e6c019f";
     Response response = await get(Uri.parse(url));
     Map data = jsonDecode(response.body);
     setState(() {
@@ -58,7 +61,7 @@ class _HomeState extends State<Home> {
 
   getNewsofIndia() async {
     String url =
-        "https://newsapi.org/v2/top-headlines?country=in&apiKey=9bb7bf6152d147ad8ba14cd0e7452f2f";
+        "https://newsapi.org/v2/top-headlines?country=in&apiKey=91f0251d914547858c9341508e6c019f";
     Response response = await get(Uri.parse(url));
     Map data = jsonDecode(response.body);
     setState(() {
@@ -84,10 +87,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("NEWZZAPP"),
-        centerTitle: true,
-      ),
+
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -115,7 +115,7 @@ class _HomeState extends State<Home> {
                     child: Container(
                       child: Icon(
                         Icons.search,
-                        color: Colors.blueGrey,
+                        color: Colors.green,
                       ),
                       margin: EdgeInsets.fromLTRB(3, 0, 7, 0),
                     ),
@@ -136,7 +136,7 @@ class _HomeState extends State<Home> {
 
                       },
                       decoration: InputDecoration(
-                          border: InputBorder.none, hintText: "Search Health"),
+                          border: InputBorder.none, hintText: "Search"),
                     ),
                   )
                 ],
@@ -159,15 +159,15 @@ class _HomeState extends State<Home> {
                         },
                         child: Container(
                           padding: EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 10),
+                              horizontal: 15, vertical: 8),
                           margin: EdgeInsets.symmetric(horizontal: 5),
                           decoration: BoxDecoration(
-                              color: Colors.blueGrey,
-                              borderRadius: BorderRadius.circular(15)),
+                              color: Colors.green,
+                              borderRadius: BorderRadius.circular(20)),
                           child: Center(
                             child: Text(navBarItem[index],
                                 style: TextStyle(
-                                    fontSize: 19,
+                                    fontSize: 16,
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold)),
                           ),
@@ -361,7 +361,7 @@ class _HomeState extends State<Home> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
-                                          Category(Query: "Technology")));
+                                          Category(Query: "Top News")));
                             },
                             child: Text("SHOW MORE")),
                       ],
