@@ -1,4 +1,4 @@
-# newzzapp
+# Newzzapp
 
 News Application based on User preferences working on multiple devices/platforms.
 Different users have different devices and it is difficult to find a single application which covers large user base.
