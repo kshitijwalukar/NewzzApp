@@ -1,0 +1,4 @@
+#Sun Apr 17 23:14:42 IST 2022
+base.0=D\:\\newzzapp\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
+renamed.0=classes.dex
+path.0=classes.dex
