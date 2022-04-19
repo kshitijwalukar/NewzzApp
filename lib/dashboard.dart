@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'dart:convert';
 import 'package:newzzapp/NewsView.dart';
 import 'package:newzzapp/model.dart';
@@ -5,6 +8,7 @@ import 'package:newzzapp/category.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:http/http.dart';
+import 'package:path_provider/path_provider.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({Key? key}) : super(key: key);
@@ -14,6 +18,11 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
+
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =FlutterLocalNotificationsPlugin();
+
+
+
   TextEditingController searchController = new TextEditingController();
   List<NewsQueryModel> newsModelList = <NewsQueryModel>[];
   List<NewsQueryModel> newsModelListCarousel = <NewsQueryModel>[];
@@ -32,8 +41,10 @@ class _DashboardPageState extends State<DashboardPage> {
   getNewsByQuery(String query) async {
     Map element;
     int i = 0;
+    final today = DateTime.now();
+    var dateval = today.subtract(const Duration(days: 10));
     String url =
-        "https://newsapi.org/v2/everything?q=$query&from=2022-02-088&sortBy=publishedAt&apiKey=91f0251d914547858c9341508e6c019f";
+        "https://newsapi.org/v2/everything?q=$query&from=$dateval&apiKey=91f0251d914547858c9341508e6c019f";
     Response response = await get(Uri.parse(url));
     Map data = jsonDecode(response.body);
     setState(() {
@@ -80,9 +91,60 @@ class _DashboardPageState extends State<DashboardPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getNewsByQuery("corona");
+    var initializationSettingsAndroid = AndroidInitializationSettings('ic_launcher');
+    var initializationSettingsIOs = IOSInitializationSettings();
+    var initSettings = InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOs);
+    flutterLocalNotificationsPlugin.initialize(initSettings, onSelectNotification: (String? payload) async {
+      await Navigator.push(context, MaterialPageRoute(builder: (context)=> NewsView(newsModelList[0].newsUrl)));
+    });
+    getNewsByQuery("news");
     getNewsofIndia();
   }
+
+
+  Future<String> _downloadAndSaveFile(String url, String fileName) async {
+    final Directory directory = await getApplicationDocumentsDirectory();
+    final String filePath = '${directory.path}/$fileName';
+    final Response response = await get(Uri.parse(url));
+    final File file = File(filePath);
+    await file.writeAsBytes(response.bodyBytes);
+    return filePath;
+  }
+
+  Future<void> showBigPictureNotification() async {
+    final String bigPicturePath =  await _downloadAndSaveFile(newsModelList[0].newsImg, 'bigPicture');
+    final BigPictureStyleInformation bigPictureStyleInformation =
+    BigPictureStyleInformation(FilePathAndroidBitmap(bigPicturePath),
+        largeIcon: FilePathAndroidBitmap(bigPicturePath),
+        contentTitle: newsModelList[0].newsHead,
+        htmlFormatContentTitle: true,
+        summaryText: newsModelList[0]
+            .newsDes
+            .length >
+            50
+            ? "${newsModelList[0].newsDes.substring(0, 55)}...."
+            : newsModelList[0]
+            .newsDes,
+        htmlFormatSummaryText: true);
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'big text channel id',
+        'big text channel name',
+        'big text channel description',
+        playSound: true,
+        styleInformation: bigPictureStyleInformation);
+    var platformChannelSpecifics =
+    NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0, newsModelList[0].newsHead, newsModelList[0]
+        .newsDes
+        .length >
+        50
+        ? "${newsModelList[0].newsDes.substring(0, 55)}...."
+        : newsModelList[0]
+        .newsDes, platformChannelSpecifics,
+        payload: "big image notifications");
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +159,7 @@ class _DashboardPageState extends State<DashboardPage> {
               padding: EdgeInsets.symmetric(horizontal: 8),
               margin: EdgeInsets.symmetric(horizontal: 24, vertical: 20),
               decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(24)),
+                  color: Colors.white, borderRadius: BorderRadius.circular(24), border: Border.all(color: Colors.green)),
               child: Row(
                 children: [
                   GestureDetector(
@@ -124,6 +186,8 @@ class _DashboardPageState extends State<DashboardPage> {
                     child: TextField(
                       controller: searchController,
                       textInputAction: TextInputAction.search,
+                      cursorColor: Colors.green,
+                      style: TextStyle(color: Color(0xff31b322)),
                       onSubmitted: (value) {
                         if(value == ""){
                           print("BLANK SEARCH");
@@ -136,7 +200,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
                       },
                       decoration: InputDecoration(
-                          border: InputBorder.none, hintText: "Search"),
+                          border: InputBorder.none, hintText: "Search", hintStyle: TextStyle(color: Colors.green)),
                     ),
                   )
                 ],
@@ -179,7 +243,7 @@ class _DashboardPageState extends State<DashboardPage> {
               child: isLoading
                   ? Container(
                       height: 200,
-                      child: Center(child: CircularProgressIndicator()))
+                      child: Center(child: CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(Colors.green),)))
                   : CarouselSlider(
                       options: CarouselOptions(
                           height: 200, autoPlay: true, enlargeCenterPage: true),
@@ -267,8 +331,9 @@ class _DashboardPageState extends State<DashboardPage> {
                   isLoading
                       ? Container(
                           height: MediaQuery.of(context).size.height - 450,
+
                           child: Center(
-                            child: CircularProgressIndicator(),
+                            child: CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(Colors.green),),
                           ),
                         )
                       : ListView.builder(
@@ -356,6 +421,10 @@ class _DashboardPageState extends State<DashboardPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors.green,// foreground
+                            ),
+                            onLongPress: showBigPictureNotification,
                             onPressed: () {
                               Navigator.push(
                                   context,
@@ -363,7 +432,9 @@ class _DashboardPageState extends State<DashboardPage> {
                                       builder: (context) =>
                                           Category(Query: "Top News")));
                             },
-                            child: Text("SHOW MORE")),
+                            child: Text("SHOW MORE", style: TextStyle(color: Color(
+                                0xffffffff))),
+                        ),
                       ],
                     ),
                   )
@@ -375,6 +446,5 @@ class _DashboardPageState extends State<DashboardPage> {
       ),
     );
   }
-
 
 }

@@ -1,8 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.codewithdhruv.newzzapp">
+    package="com.kshitij.newzzapp">
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.INTERNET" />
    <application
-        android:label="newzzapp"
+        android:label="Newzzapp"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

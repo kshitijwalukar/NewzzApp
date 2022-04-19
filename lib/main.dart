@@ -1,9 +1,9 @@
 import 'package:newzzapp/dashboard.dart';
 import 'package:flutter/material.dart';
-import 'package:newzzapp/settings.dart';
+import 'package:newzzapp/about.dart';
 import 'package:newzzapp/page/notes_page.dart';
-import 'events.dart';
 import 'my_drawer_header.dart';
+import 'package:newzzapp/provider/theme_provider.dart';
 
 
 void main() {
@@ -15,19 +15,20 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'NewzzApp',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.green,
-      ),
+      // This is the theme of your application.
+      //
+      // Try running your application with "flutter run". You'll see the
+      // application has a blue toolbar. Then, without quitting the app, try
+      // changing the primarySwatch below to Colors.green and then invoke
+      // "hot reload" (press "r" in the console where you ran "flutter run",
+      // or simply save your changes to "hot reload" in a Flutter IDE).
+      // Notice that the counter didn't reset back to zero; the application
+      // is not restarted.
+      themeMode: ThemeMode.system,
+      theme: MyThemes.lightTheme,
+      darkTheme: MyThemes.darkTheme,
       home: HomePage(),
     );
   }
@@ -38,6 +39,17 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+  }
+
+
   var currentPage = DrawerSections.dashboard;
 
   @override
@@ -47,10 +59,8 @@ class _HomePageState extends State<HomePage> {
       container = DashboardPage();
     } else if (currentPage == DrawerSections.notes) {
       container = NotesPage();
-    } else if (currentPage == DrawerSections.events) {
-      container = EventsPage();
-    } else if (currentPage == DrawerSections.settings) {
-      container = SettingsPage();
+    } else if (currentPage == DrawerSections.about) {
+      container = AboutPage();
     }
 
     return Scaffold(
@@ -84,13 +94,11 @@ class _HomePageState extends State<HomePage> {
         children: [
           menuItem(1, "Dashboard", Icons.dashboard_outlined,
               currentPage == DrawerSections.dashboard ? true : false),
-          menuItem(2, "Custom", Icons.people_alt_outlined,
+          menuItem(2, "Custom", Icons.dashboard_customize_outlined,
               currentPage == DrawerSections.notes ? true : false),
-          menuItem(3, "Events", Icons.event,
-              currentPage == DrawerSections.events ? true : false),
           Divider(),
-          menuItem(4, "Settings", Icons.settings_outlined,
-              currentPage == DrawerSections.settings ? true : false),
+          menuItem(3, "About", Icons.info_outline,
+              currentPage == DrawerSections.about ? true : false),
         ],
       ),
     );
@@ -108,9 +116,7 @@ class _HomePageState extends State<HomePage> {
             } else if (id == 2) {
               currentPage = DrawerSections.notes;
             } else if (id == 3) {
-              currentPage = DrawerSections.events;
-            } else if (id == 4) {
-              currentPage = DrawerSections.settings;
+              currentPage = DrawerSections.about;
             }
           });
         },
@@ -146,6 +152,5 @@ class _HomePageState extends State<HomePage> {
 enum DrawerSections {
   dashboard,
   notes,
-  events,
-  settings,
+  about,
 }

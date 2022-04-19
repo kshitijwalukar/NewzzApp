@@ -37,6 +37,9 @@ CREATE TABLE $tableNotes (
   ${NoteFields.title} $textType,
   ${NoteFields.description} $textType,
   ${NoteFields.country} $textType,
+  ${NoteFields.language} $textType,
+  ${NoteFields.arrange} $textType,
+  ${NoteFields.timeranges} $textType,
   ${NoteFields.time} $textType
   )
 ''');

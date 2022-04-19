@@ -4,7 +4,7 @@ import 'package:newzzapp/db/notes_database.dart';
 import 'package:newzzapp/model/note.dart';
 import 'package:newzzapp/page/edit_note_page.dart';
 import 'dart:convert';
-
+import 'package:newzzapp/NewsView.dart';
 import 'package:newzzapp/model.dart';
 import 'package:http/http.dart';
 
@@ -24,10 +24,23 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
   late Note note;
   bool isLoading = true;
   List<NewsQueryModel> newsModelList = <NewsQueryModel>[];
-  getNewsByQuery(String query) async {
+  getNewsByQuery(String titlename, String countryname, String languagename, String arrange, String timeranges) async {
     String url = "";
+    final today = DateTime.now();
+    var dateval = today.subtract(const Duration(days: 29));
+    if(timeranges == "Last30days"){ dateval = today.subtract(const Duration(days: 29)); }else
+    if(timeranges == "Last15days"){ dateval = today.subtract(const Duration(days: 15)); }else
+    if(timeranges == "Last10days"){ dateval = today.subtract(const Duration(days: 10)); }else
+    if(timeranges == "Last1Week"){ dateval = today.subtract(const Duration(days: 7)); }else
+    if(timeranges == "Yesterday"){ dateval = today.subtract(const Duration(days: 1)); }else {//do nothing default
+    }
 
-      url ="https://newsapi.org/v2/everything?q=$query&from=2022-02-08&sortBy=publishedAt&apiKey=91f0251d914547858c9341508e6c019f";
+    if(countryname != '')
+    {
+      url  ="https://newsapi.org/v2/top-headlines?q=$titlename&from=$dateval&to=$today&language=$languagename&country=$countryname&sortBy=$arrange&apiKey=91f0251d914547858c9341508e6c019f";
+    }else{
+      url ="https://newsapi.org/v2/everything?q=$titlename&from=$dateval&to=$today&language=$languagename&sortBy=$arrange&apiKey=91f0251d914547858c9341508e6c019f";
+    }
 
     Response response = await get(Uri.parse(url));
     Map data = jsonDecode(response.body);
@@ -55,18 +68,19 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
 
     this.note = await NotesDatabase.instance.readNote(widget.noteId);
 
-    getNewsByQuery(note.title);
+    getNewsByQuery(note.title, note.country, note.language, note.arrange, note.timeranges);
     setState(() => isLoading = false);
   }
 
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
+          backgroundColor: Colors.green,
           title: Text("NEWZZAPP"),
           actions: [editButton(), deleteButton()],
         ),
         body: isLoading
-            ? Center(child: CircularProgressIndicator())
+            ? Center(child: CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(Colors.green),))
             : Padding(
                 padding: EdgeInsets.all(12),
                 child: ListView(
@@ -74,7 +88,7 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
                   children: [
                     Text(
                       note.title,
-                      textAlign: TextAlign. center,
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.green,
                         fontSize: 35,
@@ -97,7 +111,7 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
                         ],
                       ),
                     ),
-                    isLoading ? Container( height: MediaQuery.of(context).size.height -500 , child: Center(child: CircularProgressIndicator(),),) :
+                    isLoading ? Container( height: MediaQuery.of(context).size.height -500 , child: Center(child: CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(Colors.green),),),) :
                     ListView.builder(
                         physics: NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
@@ -105,7 +119,9 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
                         itemBuilder: (context, index) {
                           return Container(
                             margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                            child: Card(
+                            child: InkWell(
+                              onTap: () {Navigator.push(context , MaterialPageRoute(builder: (context)=>NewsView(newsModelList[index].newsUrl)));},
+                              child: Card(
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(15)),
                                 elevation: 1.0,
@@ -149,6 +165,7 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
                                             )))
                                   ],
                                 )),
+                          ),
                           );
                         }),
                   ],

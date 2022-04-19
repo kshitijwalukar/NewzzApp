@@ -1,9 +1,11 @@
+import 'package:flutter/material.dart';
+
 final String tableNotes = 'notes';
 
 class NoteFields {
   static final List<String> values = [
     /// Add all fields
-    id, isImportant, number, title, description, country, time
+    id, isImportant, number, title, description, country, language, arrange, timeranges, time
   ];
 
   static final String id = '_id';
@@ -12,6 +14,9 @@ class NoteFields {
   static final String title = 'title';
   static final String description = 'description';
   static final String country = 'country';
+  static final String language = 'language';
+  static final String arrange = 'arrange';
+  static final String timeranges = 'timeranges';
   static final String time = 'time';
 }
 
@@ -22,6 +27,9 @@ class Note {
   final String title;
   final String description;
   final String country;
+  final String language;
+  final String arrange;
+  final String timeranges;
   final DateTime createdTime;
 
   const Note({
@@ -31,6 +39,9 @@ class Note {
     required this.title,
     required this.description,
     required this.country,
+    required this.language,
+    required this.arrange,
+    required this.timeranges,
     required this.createdTime,
   });
 
@@ -41,6 +52,9 @@ class Note {
     String? title,
     String? description,
     String? country,
+    String? language,
+    String? arrange,
+    String? timeranges,
     DateTime? createdTime,
   }) =>
       Note(
@@ -50,6 +64,9 @@ class Note {
         title: title ?? this.title,
         description: description ?? this.description,
         country: country ?? this.country,
+        language: language ?? this.language,
+        arrange: arrange ?? this.arrange,
+        timeranges: timeranges ?? this.timeranges,
         createdTime: createdTime ?? this.createdTime,
       );
 
@@ -60,6 +77,9 @@ class Note {
         title: json[NoteFields.title] as String,
         description: json[NoteFields.description] as String,
         country: json[NoteFields.country] as String,
+        language: json[NoteFields.language] as String,
+        arrange: json[NoteFields.arrange] as String,
+        timeranges: json[NoteFields.timeranges] as String,
         createdTime: DateTime.parse(json[NoteFields.time] as String),
       );
 
@@ -70,6 +90,9 @@ class Note {
         NoteFields.number: number,
         NoteFields.description: description,
         NoteFields.country: country,
+        NoteFields.language: language,
+        NoteFields.arrange: arrange,
+        NoteFields.timeranges: timeranges,
         NoteFields.time: createdTime.toIso8601String(),
       };
 }

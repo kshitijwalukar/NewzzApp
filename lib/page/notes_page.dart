@@ -41,7 +41,7 @@ class _NotesPageState extends State<NotesPage> {
   Widget build(BuildContext context) => Scaffold(
         body: Center(
           child: isLoading
-              ? CircularProgressIndicator()
+              ? CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(Colors.green))
               : notes.isEmpty
                   ? Text(
                       'No Data',
@@ -51,7 +51,7 @@ class _NotesPageState extends State<NotesPage> {
         ),
         floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.green,
-          child: Icon(Icons.add),
+          child: Icon(Icons.add, color: Colors.white,),
           onPressed: () async {
             await Navigator.of(context).push(
               MaterialPageRoute(builder: (context) => AddEditNotePage()),

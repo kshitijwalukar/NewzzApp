@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:newzzapp/model.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:newzzapp/NewsView.dart';
+
 class Category extends StatefulWidget {
 
   String Query;
@@ -21,7 +23,9 @@ class _CategoryState extends State<Category> {
       url = "https://newsapi.org/v2/top-headlines?country=in&apiKey=91f0251d914547858c9341508e6c019f";
 
     }else{
-      url ="https://newsapi.org/v2/everything?q=$query&from=2022-02-08&sortBy=publishedAt&apiKey=91f0251d914547858c9341508e6c019f";
+      final today = DateTime.now();
+      var dateval = today.subtract(const Duration(days: 10));
+      url = "https://newsapi.org/v2/everything?q=$query&from=$dateval&apiKey=91f0251d914547858c9341508e6c019f";
     }
 
     Response response = await get(Uri.parse(url));
@@ -50,6 +54,7 @@ class _CategoryState extends State<Category> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.green,
         title: Text("NEWZZAPP"),
         centerTitle: true,
       ),
@@ -60,18 +65,28 @@ class _CategoryState extends State<Category> {
               Container(
                 margin : EdgeInsets.fromLTRB(15, 25, 0, 0),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-SizedBox(width: 12,),
+                    SizedBox(width: 12),
                     Container(
                   margin: EdgeInsets.symmetric(vertical: 15),
-                      child: Text(widget.Query, style: TextStyle( fontSize: 39
-                      ),),
+                      child: Text(
+                        (widget.Query).toUpperCase(),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                        color: Colors.green,
+                        fontSize: 35,
+                        fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.italic,
+                      ),
+                      ),
                     ),
                   ],
                 ),
               ),
-              isLoading ? Container( height: MediaQuery.of(context).size.height -500 , child: Center(child: CircularProgressIndicator(),),) :
+              SizedBox(height: 8),
+              Divider(),
+              isLoading ? Container( height: MediaQuery.of(context).size.height -500 , child: Center(child: CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(Colors.green),),),) :
               ListView.builder(
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
@@ -79,7 +94,9 @@ SizedBox(width: 12,),
                   itemBuilder: (context, index) {
                     return Container(
                       margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                      child: Card(
+                      child: InkWell(
+                        onTap: () {Navigator.push(context , MaterialPageRoute(builder: (context)=>NewsView(newsModelList[index].newsUrl)));},
+                        child: Card(
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15)),
                           elevation: 1.0,
@@ -123,6 +140,7 @@ SizedBox(width: 12,),
                                       )))
                             ],
                           )),
+                    ),
                     );
                   }),
 

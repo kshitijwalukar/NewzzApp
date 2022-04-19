@@ -1,4 +1,4 @@
-package com.codewithdhruv.newzzapp;
+package com.kshitij.newzzapp;
 
 import io.flutter.embedding.android.FlutterActivity;
 
