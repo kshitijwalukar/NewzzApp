@@ -1,6 +1,6 @@
 io/flutter/plugins/GeneratedPluginRegistrant.java
  io.flutter.plugins.GeneratedPluginRegistrant
-com/codewithdhruv/arne_news/MainActivity.java
- com.kshitij.newzzapp.MainActivity
 com/kshitij/newzzapp/BuildConfig.java
  com.kshitij.newzzapp.BuildConfig
+com/kshitij/newzzapp/MainActivity.java
+ com.kshitij.newzzapp.MainActivity
